@@ -11,7 +11,7 @@
             Jan Bode
           </v-list-item-subtitle>
           <v-list-item-subtitle>
-            <a href="https://git.scc.kit.edu/uvuyo">Link to @GitLab</a>
+            <a href="https://github.com/bodejan/ladder.ly">Link to @GitHub</a>
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>

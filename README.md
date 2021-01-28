@@ -5,7 +5,7 @@ Development of a working prototype for automated aggregation and visualization o
 
 ## Installation Backend
 
-* clone the GitHub repo ```TODO: link to out repo```
+* clone the GitHub repo ```https://github.com/bodejan/ladder.ly```
 * navigate to the backend folder
 * create venv: ```python -m venv venv```
     * run ```venv\Scripts\activate.bat``` (Windows)

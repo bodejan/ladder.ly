@@ -22,7 +22,7 @@ Development of a working prototype for automated aggregation and visualization o
     * your FE server is now running 
 
 
-# Documentation
+## Documentation
 Detailed documentation:
 
 * [Backend](https://htmlpreview.github.io/?https://github.com/bodejan/ladder.ly/blob/master/backend/docs/index.html) :

@@ -25,10 +25,10 @@ Development of a working prototype for automated aggregation and visualization o
 # Documentation
 Detailed documentation:
 
-* [Backend](backend/docs/index.html) :
-  * [app.py](backend/docs/app.html)
-  * [functions.py](backend/docs/functions.html)   
-* [Frontend]()
+* [Backend](https://htmlpreview.github.com/bodejan/ladder.ly/tree/master/backend/docs/index.html) :
+  * [app.py](https://htmlpreview.github.com/bodejan/ladder.ly/tree/master/backend/docs/app.html)
+  * [functions.py](https://htmlpreview.github.com/bodejan/ladder.ly/tree/master/backend/docs/functions.html)   
+* [Frontend](frontend/docs/About.md)
     * [About.vue](frontend/docs/About.md)
     * [Home.vue](frontend/docs/Home.md)
     * [Data.vue]((frontend/docs/Data.md))

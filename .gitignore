@@ -1,0 +1,6 @@
+backend/ladder_ly/__pycache__
+backend/venv
+.DS_Store.txt
+.DS_Store
+.vscode
+frontend/node_modules

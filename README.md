@@ -52,7 +52,8 @@ ____
 
 * configure your hierachical value map:
     * cutoff-value
-    * only direct, direct and indirect implications, treatment
+    * only direct, direct and indirect implications
+    * treatment
     * submit to update the hierachical value map
 
 ___

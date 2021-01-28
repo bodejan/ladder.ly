@@ -2,6 +2,7 @@
   <v-container>
     <h1> ladder.ly </h1>
     <p>Upload your files to create an interactive hierarchical value map</p>
+    <v-img src="@/assets/Ladder.svg"></v-img>
     <v-container>
       <v-file-input type="file" label="Click here to select a ladders.xlsx file" show-size v-model="ladders"></v-file-input>
       <v-file-input type="file" label="Click here to select a labels.xlsx file" show-size v-model="labels"></v-file-input>

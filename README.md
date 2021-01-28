@@ -70,6 +70,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## Authors and acknowledgment
 The tool has been developed by Jan Bode 
+
 Supervision: Tim Rietz 
 
 @IISM - Karlsruhe Institute of Technology

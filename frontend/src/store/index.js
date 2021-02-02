@@ -118,7 +118,7 @@ const actions = {
    */
   updateNetwork(context, payload) {
     context.commit('setNetworkOptions', payload)
-    return fetchNetworkData(this.state.upload, this.state.cutOffValue, this.state.radioIndirect, this.state.radioTreatments)
+    return fetchNetworkData(this.state.upload, this.state.cutOffValue, this.state.radioInDirect, this.state.radioTreatments)
     .then((response) => context.commit('setNetworkData', { edges: response.data.edges, nodes: response.data.nodes, treatments: response.data.treatments, cutOffValue: response.data.cutOffValue }))
     .catch((error) => {
       console.error(error)

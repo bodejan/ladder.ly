@@ -38,12 +38,14 @@ Detailed documentation:
 
 
 ## Usage
-* start BE server
+* start BE server (using the venv python interpreter e.g. in VSC)
 * start FE server
 * open local/network host in your browser
 * upload your data 
     * make sure it is in the right format, use example_ladders.xlsx and example_labels.xlsx as template
-    * your uploaded data is displayed @/data in a grid layout
+    * if the backend throws an error related to the xlsx files, try to open and save the files anew
+* you will be redirected to your hierarchical value map
+* your uploaded data is displayed @ /data in a grid layout
 
 ____
 

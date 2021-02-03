@@ -42,7 +42,7 @@ Detailed documentation:
 * start FE server
 * open local/network host in your browser
 * upload your data 
-    * make sure it is in the right format, use example_ladders.xlsx and example_labels-xlsx as template
+    * make sure it is in the right format, use example_ladders.xlsx and example_labels.xlsx as template
     * your uploaded data is displayed @/data in a grid layout
 
 ____

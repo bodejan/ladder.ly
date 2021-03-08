@@ -4,6 +4,7 @@ import Home from '@/components/Home'
 import Data from '@/components/Data'
 import About from '@/components/About'
 import Hvm from '@/components/Hvm'
+import Aim from '@/components/Aim'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/hvm',
       name: 'Hvm',
       component: Hvm
+    },
+    {
+      path: '/aim',
+      name: 'Aim',
+      component: Aim
     }
   ]
 })

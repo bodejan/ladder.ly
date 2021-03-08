@@ -397,8 +397,8 @@ def create_grid_aim(labels, ladders):
     for x in range(0, (len_labels)):
         cols.append(get_name_by_index(x,labels))
         runner += 1
-    cols.append('centraility')
-    cols.append('abstractness')
+    cols.append('Centraility')
+    cols.append('Abstractness')
     
     return {'cols':cols, 'rows':aim}
 

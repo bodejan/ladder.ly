@@ -16,16 +16,20 @@ const state = {
   gridLaddersCols: [],
   /** ladder rows needed for the grid layout, to visualize uploaded data*/
   gridLaddersRows: [],
-  /**uploaded ladders, labels */
+  /** aim columns needed for the grid layout, to visualize aim*/
+  gridAimCols: [],
+  /** aim rows needed for the grid layout, to visualize aim*/
+  gridAimRows: [],
+  /** uploaded ladders, labels */
   upload: new FormData(),
   pingPong: 'Interactive HVM',
-  /**cutOffValue default -1 */
+  /** cutOffValue default -1 */
   cutOffValue: '-1',
-  /**indicates selected radio button in hvm */
+  /** indicates selected radio button in hvm */
   radioInDirect: "direct",
-  /**possible treatments */
+  /** possible treatments */
   treatments: [],
-  /**default selected treatment */
+  /** default selected treatment */
   radioTreatments: "All"
 }
 
@@ -72,7 +76,7 @@ const actions = {
    */
   loadGridData (context) {
     return fetchGridData(this.state.upload)
-      .then((response) => context.commit('setGridData', { labels: response.data.labels, laddersCols: response.data.ladders.cols, laddersRows: JSON.parse(response.data.ladders.rows) }))
+      .then((response) => context.commit('setGridData', { labels: response.data.labels, laddersCols: response.data.ladders.cols, laddersRows: JSON.parse(response.data.ladders.rows), aimCols: response.data.aim.cols, aimRows: JSON.parse(response.data.aim.rows) }))
       .catch((error) => {
         console.error(error)
       })
@@ -134,12 +138,14 @@ const mutations = {
   /**
    * saves payload in store
    * @param {*} state - state
-   * @param {*} payload - labels, ladder columns, rows
+   * @param {*} payload - labels, ladder columns, rows and aim coumuns, rows
    */
   setGridData (state, payload) {
     state.gridLabels = payload.labels
     state.gridLaddersCols = payload.laddersCols
     state.gridLaddersRows = payload.laddersRows
+    state.gridAimCols = payload.aimCols
+    state.gridAimRows = payload.aimRows
   },
   setPingPong (state, payload) {
     state.pingPong = payload.pingPong

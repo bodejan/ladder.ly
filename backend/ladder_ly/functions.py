@@ -312,3 +312,72 @@ def remove_nodes_without_edges(nodes, edges):
         if (has_edges):
             filtered_nodes.append(node)
     return filtered_nodes
+
+
+
+
+def create_grid_aim(labels, ladders):
+    """Creats AIM
+
+    Args:
+        labels ([xlsx file]): [labels]
+        ladders ([xlsx file]): [ladders]
+        
+        
+    Returns:
+        [dict]: [cols and rows for grid table]
+    """
+    ladders = pd.read_excel(ladders).to_numpy(dtype=str)
+    labels=create_labels_tabel(labels)
+    len_labels = len(labels)
+    #init empty arrays
+    direct_implication_matrix = np.zeros((len_labels, len_labels))
+    indirect_implication_matrix = np.zeros((len_labels, len_labels))
+    radio_treatments='All'
+
+    #calculate implications
+    direct_implication_matrix_calculated = cal_direct_implication_matrix(direct_implication_matrix, ladders, labels, radio_treatments)
+    indirect_implication_matrix_calculated = cal_indirect_implication_matrix(indirect_implication_matrix, ladders, labels, radio_treatments)
+
+    #create new 2d array for aim
+    aim = np.empty((len_labels, len_labels + 3), dtype=object)
+    sum_entries = 0
+    sum_rows = np.zeros((len_labels))
+    sum_columns = np.zeros((len_labels))
+
+    #fill aim, calculate sum's
+    for x in range(len_labels):
+        aim[x][0] = x
+        for y in range(len_labels):
+            direct = int(direct_implication_matrix_calculated[x][y])
+            indirect = int(indirect_implication_matrix_calculated[x][y])
+            sum_entries = sum_entries + direct + indirect
+            sum_rows[x] = sum_rows[x] + direct + indirect
+            sum_columns[y] = sum_columns[y] + direct + indirect
+            aim[x][y+1] = "(" + str(direct) + ", " + str(indirect) + ")"
+
+    #calculate and add centrality and abstractness
+    runner = 0
+    for x in aim:
+        aim[runner][len_labels + 1] = round((sum_rows[runner]+sum_columns[runner])/sum_entries, 4)
+        if (sum_columns[runner] + sum_rows[runner] !=0):
+            aim[runner][len_labels + 2] = round(sum_columns[runner]/(sum_columns[runner] + sum_rows[runner]), 4)
+        else:
+            aim[runner][len_labels + 2] = 0
+        runner += 1
+    
+    #serialize aim
+    aim = aim.tolist()
+    aim = json.dumps(aim)
+
+    #create first row -> coulumns with empty string (first position), labelcodes, centrality and abstractness
+    runner = 0
+    cols = ['']
+    for x in range(1, (len_labels + 1)):
+        cols.append(str(runner))
+        runner += 1
+    cols.append('centraility')
+    cols.append('abstractness')
+    
+    return {'cols':cols, 'rows':aim}
+

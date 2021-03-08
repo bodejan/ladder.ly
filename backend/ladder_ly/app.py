@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import json
 
-from functions import calculate_network_data, remove_nodes_without_edges, cal_nodes, cal_edges, create_labels_tabel, create_grid_ladders
+from functions import calculate_network_data, remove_nodes_without_edges, cal_nodes, cal_edges, create_labels_tabel, create_grid_ladders, create_grid_aim
 
 
 
@@ -55,10 +55,11 @@ def grid_data():
         [dict]: [ladders, labels]
     """
     labels = request.files['uploadLabels']
-    labels = create_labels_tabel(labels)
     ladders = request.files['uploadLadders']
+    aim = create_grid_aim(labels, ladders)
+    labels = create_labels_tabel(labels)
     ladders = create_grid_ladders(ladders)
-    return jsonify({'ladders':ladders, 'labels':labels})
+    return jsonify({'ladders':ladders, 'labels':labels, 'aim':aim})
 
 @app.route('/ladders_example', methods = ["GET"])
 def get_ladders_example():

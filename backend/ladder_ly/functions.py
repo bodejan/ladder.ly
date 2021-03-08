@@ -44,7 +44,7 @@ def create_grid_ladders(ladders):
     """
     ladders = pd.read_excel(ladders).to_numpy(dtype=str)
 
-    cols = ['id', 'treatment', 'implications']
+    cols = ['Id', 'Treatment', 'Implications']
     ladder_lenght = len(ladders[0])
 
     #calculate number of columns needed
@@ -85,25 +85,27 @@ def get_index_by_name(name, labels):
         return index
 
 def get_name_by_index(index, labels):
-    """get name for index
+    """get name with acv for index
 
     Args:
         index ([int]): [index/labelcode]
         labels ([dict]): [labels]
 
     Returns:
-        [String]: [name]
+        [String]: [name (acv)]
     """
     name = ""
+    acv = ""
     for x in labels:
         if (x.get('labelcode')==index):
             name = x.get('name')
+            acv = x.get('acv')
 
     if (name==""):
         print(f"no matching name for {index}")
         return "X"
     else:
-        return name
+        return (name + " (" + acv + ")")
 
 
 def add_implication(implication_matrix, index_from, index_to):

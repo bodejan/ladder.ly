@@ -1,6 +1,6 @@
 <template>
 <v-container>
-    <h1>Interactive hierarchical value map</h1>
+    <h1>Interactive Hierarchical Value Map</h1>
     <v-divider class="pa-4"></v-divider>
     <div id="mynetwork"></div>
     <div id="networkOptions"></div>

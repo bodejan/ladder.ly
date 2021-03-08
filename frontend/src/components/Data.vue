@@ -24,15 +24,15 @@
         /**columns for labels table */
         colsLabels: [
             {
-                name: 'acv',
+                name: 'ACV',
                 id: 'acv'
             },
             {
-                name: 'labelcode',
+                name: 'Labelcode',
                 id: 'labelcode'
             },
             {
-                name: 'label',
+                name: 'Label',
                 id: 'name'
             }
         ],

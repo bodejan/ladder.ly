@@ -7,10 +7,6 @@
     <div>
       <grid :cols="colsLadders" :rows="rowsLadders"></grid>
     </div>
-    <v-divider class="pa-4"></v-divider>
-    <div>
-      <grid :cols="colsAim" :rows="rowsAim"></grid>
-    </div>
   </v-container>
 </template>
 
@@ -46,11 +42,6 @@
         colsLadders: this.$store.state.gridLaddersCols,
         /**rows for ladders table */
         rowsLadders: this.$store.state.gridLaddersRows,
-
-        /**columns for aim */
-        colsAim: this.$store.state.gridAimCols,
-        /**rows for aim */
-        rowsAim: this.$store.state.gridAimRows
       }
     }
   }

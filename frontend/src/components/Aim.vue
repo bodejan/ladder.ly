@@ -9,7 +9,7 @@
 <script>
   import Grid from 'gridjs-vue'
   /**
-   * This component displays the uploaded xlsx data in a Grid layout 
+   * This component displays the AIM in a Grid layout 
    */
   export default {
     components: {

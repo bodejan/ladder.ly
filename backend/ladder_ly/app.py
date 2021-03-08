@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import json
 
-from functions import calculate_network_data, remove_nodes_without_edges, cal_nodes, cal_edges, create_labels_tabel, create_grid_ladders, create_grid_aim
+from functions import calculate_network_data, remove_nodes_without_edges, cal_nodes, cal_edges, create_labels_tabel, create_grid_ladders, create_grid_aim, download_aim, serialize_numpy
 
 
 
@@ -57,9 +57,19 @@ def grid_data():
     labels = request.files['uploadLabels']
     ladders = request.files['uploadLadders']
     aim = create_grid_aim(labels, ladders)
+    aim = {'cols':aim.get('cols'), 'rows':serialize_numpy(aim.get('rows'))}
     labels = create_labels_tabel(labels)
     ladders = create_grid_ladders(ladders)
     return jsonify({'ladders':ladders, 'labels':labels, 'aim':aim})
+
+
+@app.route('/get_aim', methods = ["POST"])
+def get_aim():
+    labels = request.files['uploadLabels']
+    ladders = request.files['uploadLadders']
+    aim = create_grid_aim(labels, ladders)
+    df_csv = download_aim(aim)
+    return send_file(df_csv, as_attachment=True, attachment_filename = 'AIM', mimetype='text/csv')
 
 @app.route('/ladders_example', methods = ["GET"])
 def get_ladders_example():

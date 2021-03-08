@@ -58,8 +58,7 @@ def create_grid_ladders(ladders):
                 ladders[row][entry] = ladders[row][entry].replace('nan', '')
     
     #serialize ladders
-    ladders = ladders.tolist()
-    ladders = json.dumps(ladders)
+    ladders = serialize_numpy(ladders)
     
     return {'cols':cols, 'rows':ladders}
 
@@ -388,8 +387,7 @@ def create_grid_aim(labels, ladders):
         runner += 1
     
     #serialize aim
-    aim = aim.tolist()
-    aim = json.dumps(aim)
+    #aim = serialize_numpy(aim)
 
     #create first row -> coulumns with empty string (first position), labelcodes, centrality and abstractness
     runner = 0
@@ -402,3 +400,25 @@ def create_grid_aim(labels, ladders):
     
     return {'cols':cols, 'rows':aim}
 
+
+def download_aim(aim):
+    cols = aim.get('cols')
+    rows = aim.get('rows')
+    df = pd.DataFrame(data=rows, columns=cols)
+    df.to_csv
+    return df
+    
+    
+
+def serialize_numpy(array):
+    """serialize numpy array
+
+    Args:
+        array ([array]): [numpy array]
+
+    Returns:
+        [String]: [serialized array]
+    """
+    array = array.tolist()
+    array = json.dumps(array)
+    return array

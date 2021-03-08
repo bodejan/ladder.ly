@@ -49,3 +49,11 @@ export function fetchLabelsExample () {
     
   })
 }
+
+export function fetchAimDownload (upload) {
+  return axios.post(`${'get_aim'}`, upload, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      responseType: 'blob'
+    }})
+}

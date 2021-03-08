@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import {fetchGridData, fetchPingPong, fetchLaddersExample, fetchLabelsExample, fetchNetworkData} from '@/api'
+import {fetchGridData, fetchPingPong, fetchLaddersExample, fetchLabelsExample, fetchNetworkData, fetchAimDownload} from '@/api'
 
 Vue.use(Vuex)
 
@@ -114,6 +114,20 @@ const actions = {
       })
       .catch((error) => {console.error(error)})
   },
+  loadAim () {
+    return fetchAimDownload(this.state.upload)
+      .then((response) => {
+        var fileURL = window.URL.createObjectURL(new Blob([response.data], { type: 'text/csv' }))
+        var fileLink = document.createElement('a')
+        fileLink.href = fileURL
+        fileLink.setAttribute('download', 'aim.csv')
+        document.body.appendChild(fileLink)
+        fileLink.click()
+        console.log(response.data)
+      })
+      .catch((error) => {console.error(error)})
+  },
+
   /**
    * triggers api call to fetch data for updated vis-network
    * calls setNetworkData to save returned data

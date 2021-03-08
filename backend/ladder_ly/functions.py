@@ -385,9 +385,6 @@ def create_grid_aim(labels, ladders):
         else:
             aim[runner][len_labels + 2] = 0
         runner += 1
-    
-    #serialize aim
-    #aim = serialize_numpy(aim)
 
     #create first row -> coulumns with empty string (first position), labelcodes, centrality and abstractness
     runner = 0
@@ -396,17 +393,16 @@ def create_grid_aim(labels, ladders):
         cols.append(get_name_by_index(x,labels))
         runner += 1
     cols.append('Centraility')
-    cols.append('Abstractness')
-    
+    cols.append('Abstractness') 
+
+
+    df = pd.DataFrame(data=aim, columns=cols)
+    df.to_csv("./backend/ladder_ly/download/aim.csv")
+
+    #serialize aim
+    aim = serialize_numpy(aim)
+
     return {'cols':cols, 'rows':aim}
-
-
-def download_aim(aim):
-    cols = aim.get('cols')
-    rows = aim.get('rows')
-    df = pd.DataFrame(data=rows, columns=cols)
-    df.to_csv
-    return df
     
     
 

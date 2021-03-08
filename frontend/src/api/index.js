@@ -49,11 +49,13 @@ export function fetchLabelsExample () {
     
   })
 }
-
-export function fetchAimDownload (upload) {
-  return axios.post(`${'get_aim'}`, upload, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      responseType: 'blob'
-    }})
+/**
+ * 
+ * api call to fetch aim.csv from BE
+ */
+export function fetchAimDownload () {
+  return axios.get(`${'get_aim'}`, {
+    responseType: 'blob',
+    
+  })
 }

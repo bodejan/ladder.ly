@@ -114,8 +114,12 @@ const actions = {
       })
       .catch((error) => {console.error(error)})
   },
+  /**
+   * triggers api call to fetch aim.csv
+   * @returns aim.csv
+   */
   loadAim () {
-    return fetchAimDownload(this.state.upload)
+    return fetchAimDownload()
       .then((response) => {
         var fileURL = window.URL.createObjectURL(new Blob([response.data], { type: 'text/csv' }))
         var fileLink = document.createElement('a')

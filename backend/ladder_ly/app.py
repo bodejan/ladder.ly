@@ -57,19 +57,13 @@ def grid_data():
     labels = request.files['uploadLabels']
     ladders = request.files['uploadLadders']
     aim = create_grid_aim(labels, ladders)
-    aim = {'cols':aim.get('cols'), 'rows':serialize_numpy(aim.get('rows'))}
     labels = create_labels_tabel(labels)
     ladders = create_grid_ladders(ladders)
     return jsonify({'ladders':ladders, 'labels':labels, 'aim':aim})
 
-
-@app.route('/get_aim', methods = ["POST"])
+@app.route('/get_aim', methods = ["GET"])
 def get_aim():
-    labels = request.files['uploadLabels']
-    ladders = request.files['uploadLadders']
-    aim = create_grid_aim(labels, ladders)
-    df_csv = download_aim(aim)
-    return send_file(df_csv, as_attachment=True, attachment_filename = 'AIM', mimetype='text/csv')
+    return send_file("download/aim.csv", as_attachment=True, attachment_filename = 'AIM', mimetype='text/csv')
 
 @app.route('/ladders_example', methods = ["GET"])
 def get_ladders_example():

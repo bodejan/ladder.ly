@@ -85,6 +85,27 @@ def get_index_by_name(name, labels):
     else:
         return index
 
+def get_name_by_index(index, labels):
+    """get name for index
+
+    Args:
+        index ([int]): [index/labelcode]
+        labels ([dict]): [labels]
+
+    Returns:
+        [String]: [name]
+    """
+    name = ""
+    for x in labels:
+        if (x.get('labelcode')==index):
+            name = x.get('name')
+
+    if (name==""):
+        print(f"no matching name for {index}")
+        return "X"
+    else:
+        return name
+
 
 def add_implication(implication_matrix, index_from, index_to):
     """Increment implication from index_from to index_to
@@ -347,7 +368,7 @@ def create_grid_aim(labels, ladders):
 
     #fill aim, calculate sum's
     for x in range(len_labels):
-        aim[x][0] = x
+        aim[x][0] = get_name_by_index(x,labels)
         for y in range(len_labels):
             direct = int(direct_implication_matrix_calculated[x][y])
             indirect = int(indirect_implication_matrix_calculated[x][y])
@@ -373,8 +394,8 @@ def create_grid_aim(labels, ladders):
     #create first row -> coulumns with empty string (first position), labelcodes, centrality and abstractness
     runner = 0
     cols = ['']
-    for x in range(1, (len_labels + 1)):
-        cols.append(str(runner))
+    for x in range(0, (len_labels)):
+        cols.append(get_name_by_index(x,labels))
         runner += 1
     cols.append('centraility')
     cols.append('abstractness')

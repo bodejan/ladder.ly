@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import json
 
-from functions import calculate_network_data, remove_nodes_without_edges, cal_nodes, cal_edges, create_labels_tabel, create_grid_ladders, create_grid_aim, download_aim, serialize_numpy
+from functions import calculate_network_data, remove_nodes_without_edges, cal_nodes, cal_edges, create_labels_tabel, create_grid_ladders, create_grid_aim, serialize_numpy
 
 
 

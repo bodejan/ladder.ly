@@ -337,7 +337,7 @@ def remove_nodes_without_edges(nodes, edges):
 
 
 def create_grid_aim(labels, ladders):
-    """Creats AIM
+    """Creats and safes AIM
 
     Args:
         labels ([xlsx file]): [labels]
@@ -386,7 +386,7 @@ def create_grid_aim(labels, ladders):
             aim[runner][len_labels + 2] = 0
         runner += 1
 
-    #create first row -> coulumns with empty string (first position), labelcodes, centrality and abstractness
+    #create first row -> coulumn with empty string (first position), labelcodes, centrality and abstractness
     runner = 0
     cols = ['']
     for x in range(0, (len_labels)):

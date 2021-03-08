@@ -63,7 +63,13 @@ def grid_data():
 
 @app.route('/get_aim', methods = ["GET"])
 def get_aim():
-    return send_file("download/aim.csv", as_attachment=True, attachment_filename = 'AIM', mimetype='text/csv')
+    """Sends aim.csv to FE
+    @app.route('/get_aim', methods = ["GET"])
+
+    Returns:
+        [csv file]: [aim]
+    """
+    return send_file("download/aim.csv", as_attachment=True, attachment_filename = 'aim', mimetype='text/csv')
 
 @app.route('/ladders_example', methods = ["GET"])
 def get_ladders_example():

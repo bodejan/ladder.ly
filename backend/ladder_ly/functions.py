@@ -140,7 +140,7 @@ def cal_direct_implication_matrix(implication_matrix_direct, ladders, labels, ra
         if (radio_treatments==x[1] or radio_treatments=='All'):
 
             #ID|treatment|first implication -> start at 2 (hardcoded)
-            #countLadderColumn -1 beaause of x[running_index+1]
+            #countLadderColumn -1 because of x[running_index+1], last label has no implication
             for running_index in range(2, countLadderColumn -1):
                 #if next is empty -> break
                 if (x[running_index+1]== 'nan'):
@@ -183,7 +183,7 @@ def cal_indirect_implication_matrix(implication_matrix_indirect, ladders, labels
                 indirect_implications = set()
 
                 #add indirect and direct implications to set -> indirect implications are only added once
-                for y in range(running_index+1, countLadderColumn-1):
+                for y in range(running_index+1, countLadderColumn):
                     #if next is empty -> break
                     if (x[y]== 'nan'):
                         break
@@ -381,6 +381,9 @@ def create_grid_aim(labels, ladders):
         for y in range(len_labels):
             direct = int(direct_implication_matrix_calculated[x][y])
             indirect = int(indirect_implication_matrix_calculated[x][y])
+            #indirect contains direct and indirect implications (see cal_indirect_implication_matrix)
+            #therefore direct implications need to be subtracted
+            indirect = indirect - direct
             sum_entries = sum_entries + direct + indirect
             sum_rows[x] = sum_rows[x] + direct + indirect
             sum_columns[y] = sum_columns[y] + direct + indirect

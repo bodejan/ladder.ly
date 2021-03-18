@@ -175,18 +175,28 @@ def cal_indirect_implication_matrix(implication_matrix_indirect, ladders, labels
         #include ladder if all, or the correct treatment is selected
         if (radio_treatments==x[1] or radio_treatments=='All'):
 
-            #ID|treatment|first implication -> start at 2 (hardcoded)
-            #countLadderColumn -1 beaause of x[running_index+1]
+            #id|treatment|first implication -> start at 2 (hardcoded)
+            #countLadderColumn -1 because of x[running_index+1]
             for running_index in range(2, countLadderColumn - 1):
                 row_implication = x[running_index]
-                for y in range(running_index+1, countLadderColumn-1):
+
+                indirect_implications = set()
+
+                #add indirect implications to set -> indirect implications are only added once
+                #indirect implications have at least one implication in-between -> running_index + 2
+                for y in range(running_index+2, countLadderColumn-1):
                     #if next is empty -> break
                     if (x[y]== 'nan'):
                         break
                     column_implication = x[y]
-                    #add to indirect implication matrix, self-implications are not added
-                    if (row_implication!=column_implication):
-                        add_implication(implication_matrix_indirect, get_index_by_name(row_implication, labels), get_index_by_name(column_implication, labels))
+                    #add implication to set
+                    indirect_implications.add(column_implication)
+
+                #no self implications, row_implication is removed if exists 
+                indirect_implications.discard(row_implication)
+                #add indirect implications for row_implication to matrix
+                for implication in indirect_implications:
+                    add_implication(implication_matrix_indirect, get_index_by_name(row_implication, labels), get_index_by_name(implication, labels))
 
     return implication_matrix_indirect
 

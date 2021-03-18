@@ -386,7 +386,7 @@ def create_grid_aim(labels, ladders):
             sum_entries = sum_entries + direct + indirect
             sum_rows[x] = sum_rows[x] + direct + indirect
             sum_columns[y] = sum_columns[y] + direct + indirect
-            aim[x][y+1] = "(" + str(direct) + ", " + str(indirect) + ")"
+            aim[x][y+1] = str(direct) + "." + str(indirect)
 
     #calculate and add centrality and abstractness
     runner = 0

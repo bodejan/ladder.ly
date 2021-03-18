@@ -311,7 +311,7 @@ def cal_edges(cut_off_value, matrix):
     for row in matrix:
         counterElement = 0
         for number in row:
-            if (number >= int(cut_off_value)):
+            if (number > int(cut_off_value)):
                 edges.append({'from': counterRow, 'to': counterElement, 'width': number})
             counterElement = counterElement + 1
         counterRow = counterRow + 1

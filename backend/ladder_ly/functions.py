@@ -157,7 +157,7 @@ def cal_direct_implication_matrix(implication_matrix_direct, ladders, labels, ra
 
 #get indirect implication matrix
 def cal_indirect_implication_matrix(implication_matrix_indirect, ladders, labels, radio_treatments):
-    """Calculates inirect implication matrix
+    """Calculates inirect and direct implication matrix
 
     Args:
         implication_matrix_indirect ([Array]): [empty matrix]
@@ -182,9 +182,8 @@ def cal_indirect_implication_matrix(implication_matrix_indirect, ladders, labels
 
                 indirect_implications = set()
 
-                #add indirect implications to set -> indirect implications are only added once
-                #indirect implications have at least one implication in-between -> running_index + 2
-                for y in range(running_index+2, countLadderColumn-1):
+                #add indirect and direct implications to set -> indirect implications are only added once
+                for y in range(running_index+1, countLadderColumn-1):
                     #if next is empty -> break
                     if (x[y]== 'nan'):
                         break
@@ -267,7 +266,6 @@ def calculate_network_data(inLadders, inLabels, radio_treatments, radio_in_direc
     if (radio_in_direct=='direct'):
         implication_matrix_calculated = cal_direct_implication_matrix(implication_matrix, ladders, labels, radio_treatments)
     else:
-
         implication_matrix_calculated = cal_indirect_implication_matrix(implication_matrix, ladders, labels, radio_treatments)
 
     return {'implication_matrix': implication_matrix_calculated, 'labels': labels, 'treatments': treatments, 'cut_off_value': cut_off_value}

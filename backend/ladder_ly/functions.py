@@ -20,16 +20,15 @@ def create_labels_tabel(labels):
     """
     labels = pd.read_excel(labels).to_numpy(dtype=str)
     new_labels=[]
-    count = -1
+    count = 0
     for x in labels:
         labelcode = count
         #name is in first column, ACV in the second
         label_name = x[0]
         labels_ACV = x[1]
-        #skip first row
-        if (count != -1):
-            new_labels.append({'labelcode':labelcode, 'name':label_name, 'acv':labels_ACV})
+        new_labels.append({'labelcode':labelcode, 'name':label_name, 'acv':labels_ACV})
         count = count + 1
+        print(label_name)
     return new_labels
 
 

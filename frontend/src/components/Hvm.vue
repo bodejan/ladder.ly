@@ -14,7 +14,7 @@
                 cols="12"
                 sm="6"
                 md="3"
-            >select a cut-off-value
+            >select a cut-off level
             (currently selected: {{this.$store.state.cutOffValue}}):
             </v-col>
             <v-col

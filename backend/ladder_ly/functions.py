@@ -28,7 +28,6 @@ def create_labels_tabel(labels):
         labels_ACV = x[1]
         new_labels.append({'labelcode':labelcode, 'name':label_name, 'acv':labels_ACV})
         count = count + 1
-        print(label_name)
     return new_labels
 
 

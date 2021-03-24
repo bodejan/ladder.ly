@@ -27,14 +27,29 @@ Detailed documentation:
 
 * [Backend](https://htmlpreview.github.io/?https://github.com/bodejan/ladder.ly/blob/master/backend/docs/index.html) :
   * [app.py](https://htmlpreview.github.io/?https://github.com/bodejan/ladder.ly/blob/master/backend/docs/app.html) 
-  * [functions.py](https://htmlpreview.github.io/?https://github.com/bodejan/ladder.ly/blob/master/backend/docs/functions.html)   
+  * [functions.py](https://htmlpreview.github.io/?https://github.com/bodejan/ladder.ly/blob/master/backend/docs/functions.html)
+  * generate docs using [pydoc3](https://pypi.org/project/pdoc3/):
+  *```export PYTHONPATH="$PWD/ladder_ly"```
+  * ```export PYTHONPATH="$PWD/ladder_ly"```
+
+  
 * [Frontend](frontend/docs/About.md)
     * [About.vue](frontend/docs/About.md)
     * [Home.vue](frontend/docs/Home.md)
     * [Data.vue](frontend/docs/Data.md)
     * [Hvm.vue](frontend/docs/Hvm.md)
+    * [Aim.vue](frontend/docs/Aim.md)
     * [api/index.js](frontend/docs/ApiIndex.md)
     * [store/index.js](frontend/docs/StoreIndex.md)
+    * generate docs using [vuedoc](https://github.com/vuedoc/md) (.vue) and [jsdoc2md](https://github.com/jsdoc2md) (.js):
+    *```vuedoc.md src/components/*.vue --output docs/```
+    * ```npx jsdoc2md src/store/index.js  ```
+    * ```npx jsdoc2md src/api/index.js  ```
+
+
+    
+
+
 
 
 ## Usage

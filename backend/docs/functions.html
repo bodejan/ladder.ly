@@ -48,15 +48,13 @@ def create_labels_tabel(labels):
     &#34;&#34;&#34;
     labels = pd.read_excel(labels).to_numpy(dtype=str)
     new_labels=[]
-    count = -1
+    count = 0
     for x in labels:
         labelcode = count
         #name is in first column, ACV in the second
         label_name = x[0]
         labels_ACV = x[1]
-        #skip first row
-        if (count != -1):
-            new_labels.append({&#39;labelcode&#39;:labelcode, &#39;name&#39;:label_name, &#39;acv&#39;:labels_ACV})
+        new_labels.append({&#39;labelcode&#39;:labelcode, &#39;name&#39;:label_name, &#39;acv&#39;:labels_ACV})
         count = count + 1
     return new_labels
 
@@ -72,7 +70,7 @@ def create_grid_ladders(ladders):
     &#34;&#34;&#34;
     ladders = pd.read_excel(ladders).to_numpy(dtype=str)
 
-    cols = [&#39;id&#39;, &#39;treatment&#39;, &#39;implications&#39;]
+    cols = [&#39;Id&#39;, &#39;Treatment&#39;, &#39;Implications&#39;]
     ladder_lenght = len(ladders[0])
 
     #calculate number of columns needed
@@ -86,8 +84,7 @@ def create_grid_ladders(ladders):
                 ladders[row][entry] = ladders[row][entry].replace(&#39;nan&#39;, &#39;&#39;)
     
     #serialize ladders
-    ladders = ladders.tolist()
-    ladders = json.dumps(ladders)
+    ladders = serialize_numpy(ladders)
     
     return {&#39;cols&#39;:cols, &#39;rows&#39;:ladders}
 
@@ -112,6 +109,29 @@ def get_index_by_name(name, labels):
         print(f&#34;{name} is no label&#34;)
     else:
         return index
+
+def get_name_by_index(index, labels):
+    &#34;&#34;&#34;get name with acv for index
+
+    Args:
+        index ([int]): [index/labelcode]
+        labels ([dict]): [labels]
+
+    Returns:
+        [String]: [name (acv)]
+    &#34;&#34;&#34;
+    name = &#34;&#34;
+    acv = &#34;&#34;
+    for x in labels:
+        if (x.get(&#39;labelcode&#39;)==index):
+            name = x.get(&#39;name&#39;)
+            acv = x.get(&#39;acv&#39;)
+
+    if (name==&#34;&#34;):
+        print(f&#34;no matching name for {index}&#34;)
+        return &#34;X&#34;
+    else:
+        return (name + &#34; (&#34; + acv + &#34;)&#34;)
 
 
 def add_implication(implication_matrix, index_from, index_to):
@@ -146,7 +166,7 @@ def cal_direct_implication_matrix(implication_matrix_direct, ladders, labels, ra
         if (radio_treatments==x[1] or radio_treatments==&#39;All&#39;):
 
             #ID|treatment|first implication -&gt; start at 2 (hardcoded)
-            #countLadderColumn -1 beaause of x[running_index+1]
+            #countLadderColumn -1 because of x[running_index+1], last label has no implication
             for running_index in range(2, countLadderColumn -1):
                 #if next is empty -&gt; break
                 if (x[running_index+1]== &#39;nan&#39;):
@@ -163,7 +183,7 @@ def cal_direct_implication_matrix(implication_matrix_direct, ladders, labels, ra
 
 #get indirect implication matrix
 def cal_indirect_implication_matrix(implication_matrix_indirect, ladders, labels, radio_treatments):
-    &#34;&#34;&#34;Calculates inirect implication matrix
+    &#34;&#34;&#34;Calculates inirect and direct implication matrix
 
     Args:
         implication_matrix_indirect ([Array]): [empty matrix]
@@ -181,18 +201,27 @@ def cal_indirect_implication_matrix(implication_matrix_indirect, ladders, labels
         #include ladder if all, or the correct treatment is selected
         if (radio_treatments==x[1] or radio_treatments==&#39;All&#39;):
 
-            #ID|treatment|first implication -&gt; start at 2 (hardcoded)
-            #countLadderColumn -1 beaause of x[running_index+1]
+            #id|treatment|first implication -&gt; start at 2 (hardcoded)
+            #countLadderColumn -1 because of x[running_index+1]
             for running_index in range(2, countLadderColumn - 1):
                 row_implication = x[running_index]
-                for y in range(running_index+1, countLadderColumn-1):
+
+                indirect_implications = set()
+
+                #add indirect and direct implications to set -&gt; indirect implications are only added once
+                for y in range(running_index+1, countLadderColumn):
                     #if next is empty -&gt; break
                     if (x[y]== &#39;nan&#39;):
                         break
                     column_implication = x[y]
-                    #add to indirect implication matrix, self-implications are not added
-                    if (row_implication!=column_implication):
-                        add_implication(implication_matrix_indirect, get_index_by_name(row_implication, labels), get_index_by_name(column_implication, labels))
+                    #add implication to set
+                    indirect_implications.add(column_implication)
+
+                #no self implications, row_implication is removed if exists 
+                indirect_implications.discard(row_implication)
+                #add indirect implications for row_implication to matrix
+                for implication in indirect_implications:
+                    add_implication(implication_matrix_indirect, get_index_by_name(row_implication, labels), get_index_by_name(implication, labels))
 
     return implication_matrix_indirect
 
@@ -263,7 +292,6 @@ def calculate_network_data(inLadders, inLabels, radio_treatments, radio_in_direc
     if (radio_in_direct==&#39;direct&#39;):
         implication_matrix_calculated = cal_direct_implication_matrix(implication_matrix, ladders, labels, radio_treatments)
     else:
-
         implication_matrix_calculated = cal_indirect_implication_matrix(implication_matrix, ladders, labels, radio_treatments)
 
     return {&#39;implication_matrix&#39;: implication_matrix_calculated, &#39;labels&#39;: labels, &#39;treatments&#39;: treatments, &#39;cut_off_value&#39;: cut_off_value}
@@ -309,7 +337,7 @@ def cal_edges(cut_off_value, matrix):
     for row in matrix:
         counterElement = 0
         for number in row:
-            if (number &gt;= int(cut_off_value)):
+            if (number &gt; int(cut_off_value)):
                 edges.append({&#39;from&#39;: counterRow, &#39;to&#39;: counterElement, &#39;width&#39;: number})
             counterElement = counterElement + 1
         counterRow = counterRow + 1
@@ -339,7 +367,96 @@ def remove_nodes_without_edges(nodes, edges):
                 pass
         if (has_edges):
             filtered_nodes.append(node)
-    return filtered_nodes</code></pre>
+    return filtered_nodes
+
+
+
+
+def create_grid_aim(labels, ladders):
+    &#34;&#34;&#34;Creats and safes AIM
+
+    Args:
+        labels ([xlsx file]): [labels]
+        ladders ([xlsx file]): [ladders]
+        
+        
+    Returns:
+        [dict]: [cols and rows for grid table]
+    &#34;&#34;&#34;
+    ladders = pd.read_excel(ladders).to_numpy(dtype=str)
+    labels=create_labels_tabel(labels)
+    len_labels = len(labels)
+    #init empty arrays
+    direct_implication_matrix = np.zeros((len_labels, len_labels))
+    indirect_implication_matrix = np.zeros((len_labels, len_labels))
+    radio_treatments=&#39;All&#39;
+
+    #calculate implications
+    direct_implication_matrix_calculated = cal_direct_implication_matrix(direct_implication_matrix, ladders, labels, radio_treatments)
+    indirect_implication_matrix_calculated = cal_indirect_implication_matrix(indirect_implication_matrix, ladders, labels, radio_treatments)
+
+    #create new 2d array for aim
+    aim = np.empty((len_labels, len_labels + 3), dtype=object)
+    sum_entries = 0
+    sum_rows = np.zeros((len_labels))
+    sum_columns = np.zeros((len_labels))
+
+    #fill aim, calculate sum&#39;s
+    for x in range(len_labels):
+        aim[x][0] = get_name_by_index(x,labels)
+        for y in range(len_labels):
+            direct = int(direct_implication_matrix_calculated[x][y])
+            indirect = int(indirect_implication_matrix_calculated[x][y])
+            #indirect contains direct and indirect implications (see cal_indirect_implication_matrix)
+            #therefore direct implications need to be subtracted
+            indirect = indirect - direct
+            sum_entries = sum_entries + direct + indirect
+            sum_rows[x] = sum_rows[x] + direct + indirect
+            sum_columns[y] = sum_columns[y] + direct + indirect
+            aim[x][y+1] = str(direct) + &#34;.&#34; + str(indirect)
+
+    #calculate and add centrality and abstractness
+    runner = 0
+    for x in aim:
+        aim[runner][len_labels + 1] = round((sum_rows[runner]+sum_columns[runner])/sum_entries, 4)
+        if (sum_columns[runner] + sum_rows[runner] !=0):
+            aim[runner][len_labels + 2] = round(sum_columns[runner]/(sum_columns[runner] + sum_rows[runner]), 4)
+        else:
+            aim[runner][len_labels + 2] = 0
+        runner += 1
+
+    #create first row -&gt; coulumn with empty string (first position), labelcodes, centrality and abstractness
+    runner = 0
+    cols = [&#39;&#39;]
+    for x in range(0, (len_labels)):
+        cols.append(get_name_by_index(x,labels))
+        runner += 1
+    cols.append(&#39;Centraility&#39;)
+    cols.append(&#39;Abstractness&#39;) 
+
+
+    df = pd.DataFrame(data=aim, columns=cols)
+    df.to_csv(&#34;./backend/ladder_ly/download/aim.csv&#34;)
+
+    #serialize aim
+    aim = serialize_numpy(aim)
+
+    return {&#39;cols&#39;:cols, &#39;rows&#39;:aim}
+    
+    
+
+def serialize_numpy(array):
+    &#34;&#34;&#34;serialize numpy array
+
+    Args:
+        array ([array]): [numpy array]
+
+    Returns:
+        [String]: [serialized array]
+    &#34;&#34;&#34;
+    array = array.tolist()
+    array = json.dumps(array)
+    return array</code></pre>
 </details>
 </section>
 <section>
@@ -423,7 +540,7 @@ def remove_nodes_without_edges(nodes, edges):
         if (radio_treatments==x[1] or radio_treatments==&#39;All&#39;):
 
             #ID|treatment|first implication -&gt; start at 2 (hardcoded)
-            #countLadderColumn -1 beaause of x[running_index+1]
+            #countLadderColumn -1 because of x[running_index+1], last label has no implication
             for running_index in range(2, countLadderColumn -1):
                 #if next is empty -&gt; break
                 if (x[running_index+1]== &#39;nan&#39;):
@@ -475,7 +592,7 @@ def remove_nodes_without_edges(nodes, edges):
     for row in matrix:
         counterElement = 0
         for number in row:
-            if (number &gt;= int(cut_off_value)):
+            if (number &gt; int(cut_off_value)):
                 edges.append({&#39;from&#39;: counterRow, &#39;to&#39;: counterElement, &#39;width&#39;: number})
             counterElement = counterElement + 1
         counterRow = counterRow + 1
@@ -486,7 +603,7 @@ def remove_nodes_without_edges(nodes, edges):
 <span>def <span class="ident">cal_indirect_implication_matrix</span></span>(<span>implication_matrix_indirect, ladders, labels, radio_treatments)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Calculates inirect implication matrix</p>
+<div class="desc"><p>Calculates inirect and direct implication matrix</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>implication_matrix_indirect</code></strong> :&ensp;<code>[Array]</code></dt>
@@ -508,7 +625,7 @@ def remove_nodes_without_edges(nodes, edges):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def cal_indirect_implication_matrix(implication_matrix_indirect, ladders, labels, radio_treatments):
-    &#34;&#34;&#34;Calculates inirect implication matrix
+    &#34;&#34;&#34;Calculates inirect and direct implication matrix
 
     Args:
         implication_matrix_indirect ([Array]): [empty matrix]
@@ -526,18 +643,27 @@ def remove_nodes_without_edges(nodes, edges):
         #include ladder if all, or the correct treatment is selected
         if (radio_treatments==x[1] or radio_treatments==&#39;All&#39;):
 
-            #ID|treatment|first implication -&gt; start at 2 (hardcoded)
-            #countLadderColumn -1 beaause of x[running_index+1]
+            #id|treatment|first implication -&gt; start at 2 (hardcoded)
+            #countLadderColumn -1 because of x[running_index+1]
             for running_index in range(2, countLadderColumn - 1):
                 row_implication = x[running_index]
-                for y in range(running_index+1, countLadderColumn-1):
+
+                indirect_implications = set()
+
+                #add indirect and direct implications to set -&gt; indirect implications are only added once
+                for y in range(running_index+1, countLadderColumn):
                     #if next is empty -&gt; break
                     if (x[y]== &#39;nan&#39;):
                         break
                     column_implication = x[y]
-                    #add to indirect implication matrix, self-implications are not added
-                    if (row_implication!=column_implication):
-                        add_implication(implication_matrix_indirect, get_index_by_name(row_implication, labels), get_index_by_name(column_implication, labels))
+                    #add implication to set
+                    indirect_implications.add(column_implication)
+
+                #no self implications, row_implication is removed if exists 
+                indirect_implications.discard(row_implication)
+                #add indirect implications for row_implication to matrix
+                for implication in indirect_implications:
+                    add_implication(implication_matrix_indirect, get_index_by_name(row_implication, labels), get_index_by_name(implication, labels))
 
     return implication_matrix_indirect</code></pre>
 </details>
@@ -643,10 +769,102 @@ def remove_nodes_without_edges(nodes, edges):
     if (radio_in_direct==&#39;direct&#39;):
         implication_matrix_calculated = cal_direct_implication_matrix(implication_matrix, ladders, labels, radio_treatments)
     else:
-
         implication_matrix_calculated = cal_indirect_implication_matrix(implication_matrix, ladders, labels, radio_treatments)
 
     return {&#39;implication_matrix&#39;: implication_matrix_calculated, &#39;labels&#39;: labels, &#39;treatments&#39;: treatments, &#39;cut_off_value&#39;: cut_off_value}</code></pre>
+</details>
+</dd>
+<dt id="ladder_ly.functions.create_grid_aim"><code class="name flex">
+<span>def <span class="ident">create_grid_aim</span></span>(<span>labels, ladders)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creats and safes AIM</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>labels</code></strong> :&ensp;<code>[xlsx file]</code></dt>
+<dd>[labels]</dd>
+<dt><strong><code>ladders</code></strong> :&ensp;<code>[xlsx file]</code></dt>
+<dd>[ladders]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>[dict]</code></dt>
+<dd>[cols and rows for grid table]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_grid_aim(labels, ladders):
+    &#34;&#34;&#34;Creats and safes AIM
+
+    Args:
+        labels ([xlsx file]): [labels]
+        ladders ([xlsx file]): [ladders]
+        
+        
+    Returns:
+        [dict]: [cols and rows for grid table]
+    &#34;&#34;&#34;
+    ladders = pd.read_excel(ladders).to_numpy(dtype=str)
+    labels=create_labels_tabel(labels)
+    len_labels = len(labels)
+    #init empty arrays
+    direct_implication_matrix = np.zeros((len_labels, len_labels))
+    indirect_implication_matrix = np.zeros((len_labels, len_labels))
+    radio_treatments=&#39;All&#39;
+
+    #calculate implications
+    direct_implication_matrix_calculated = cal_direct_implication_matrix(direct_implication_matrix, ladders, labels, radio_treatments)
+    indirect_implication_matrix_calculated = cal_indirect_implication_matrix(indirect_implication_matrix, ladders, labels, radio_treatments)
+
+    #create new 2d array for aim
+    aim = np.empty((len_labels, len_labels + 3), dtype=object)
+    sum_entries = 0
+    sum_rows = np.zeros((len_labels))
+    sum_columns = np.zeros((len_labels))
+
+    #fill aim, calculate sum&#39;s
+    for x in range(len_labels):
+        aim[x][0] = get_name_by_index(x,labels)
+        for y in range(len_labels):
+            direct = int(direct_implication_matrix_calculated[x][y])
+            indirect = int(indirect_implication_matrix_calculated[x][y])
+            #indirect contains direct and indirect implications (see cal_indirect_implication_matrix)
+            #therefore direct implications need to be subtracted
+            indirect = indirect - direct
+            sum_entries = sum_entries + direct + indirect
+            sum_rows[x] = sum_rows[x] + direct + indirect
+            sum_columns[y] = sum_columns[y] + direct + indirect
+            aim[x][y+1] = str(direct) + &#34;.&#34; + str(indirect)
+
+    #calculate and add centrality and abstractness
+    runner = 0
+    for x in aim:
+        aim[runner][len_labels + 1] = round((sum_rows[runner]+sum_columns[runner])/sum_entries, 4)
+        if (sum_columns[runner] + sum_rows[runner] !=0):
+            aim[runner][len_labels + 2] = round(sum_columns[runner]/(sum_columns[runner] + sum_rows[runner]), 4)
+        else:
+            aim[runner][len_labels + 2] = 0
+        runner += 1
+
+    #create first row -&gt; coulumn with empty string (first position), labelcodes, centrality and abstractness
+    runner = 0
+    cols = [&#39;&#39;]
+    for x in range(0, (len_labels)):
+        cols.append(get_name_by_index(x,labels))
+        runner += 1
+    cols.append(&#39;Centraility&#39;)
+    cols.append(&#39;Abstractness&#39;) 
+
+
+    df = pd.DataFrame(data=aim, columns=cols)
+    df.to_csv(&#34;./backend/ladder_ly/download/aim.csv&#34;)
+
+    #serialize aim
+    aim = serialize_numpy(aim)
+
+    return {&#39;cols&#39;:cols, &#39;rows&#39;:aim}</code></pre>
 </details>
 </dd>
 <dt id="ladder_ly.functions.create_grid_ladders"><code class="name flex">
@@ -679,7 +897,7 @@ def remove_nodes_without_edges(nodes, edges):
     &#34;&#34;&#34;
     ladders = pd.read_excel(ladders).to_numpy(dtype=str)
 
-    cols = [&#39;id&#39;, &#39;treatment&#39;, &#39;implications&#39;]
+    cols = [&#39;Id&#39;, &#39;Treatment&#39;, &#39;Implications&#39;]
     ladder_lenght = len(ladders[0])
 
     #calculate number of columns needed
@@ -693,8 +911,7 @@ def remove_nodes_without_edges(nodes, edges):
                 ladders[row][entry] = ladders[row][entry].replace(&#39;nan&#39;, &#39;&#39;)
     
     #serialize ladders
-    ladders = ladders.tolist()
-    ladders = json.dumps(ladders)
+    ladders = serialize_numpy(ladders)
     
     return {&#39;cols&#39;:cols, &#39;rows&#39;:ladders}</code></pre>
 </details>
@@ -729,15 +946,13 @@ def remove_nodes_without_edges(nodes, edges):
     &#34;&#34;&#34;
     labels = pd.read_excel(labels).to_numpy(dtype=str)
     new_labels=[]
-    count = -1
+    count = 0
     for x in labels:
         labelcode = count
         #name is in first column, ACV in the second
         label_name = x[0]
         labels_ACV = x[1]
-        #skip first row
-        if (count != -1):
-            new_labels.append({&#39;labelcode&#39;:labelcode, &#39;name&#39;:label_name, &#39;acv&#39;:labels_ACV})
+        new_labels.append({&#39;labelcode&#39;:labelcode, &#39;name&#39;:label_name, &#39;acv&#39;:labels_ACV})
         count = count + 1
     return new_labels</code></pre>
 </details>
@@ -783,6 +998,51 @@ def remove_nodes_without_edges(nodes, edges):
         print(f&#34;{name} is no label&#34;)
     else:
         return index</code></pre>
+</details>
+</dd>
+<dt id="ladder_ly.functions.get_name_by_index"><code class="name flex">
+<span>def <span class="ident">get_name_by_index</span></span>(<span>index, labels)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get name with acv for index</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>index</code></strong> :&ensp;<code>[int]</code></dt>
+<dd>[index/labelcode]</dd>
+<dt><strong><code>labels</code></strong> :&ensp;<code>[dict]</code></dt>
+<dd>[labels]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>[String]</code></dt>
+<dd>[name (acv)]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_name_by_index(index, labels):
+    &#34;&#34;&#34;get name with acv for index
+
+    Args:
+        index ([int]): [index/labelcode]
+        labels ([dict]): [labels]
+
+    Returns:
+        [String]: [name (acv)]
+    &#34;&#34;&#34;
+    name = &#34;&#34;
+    acv = &#34;&#34;
+    for x in labels:
+        if (x.get(&#39;labelcode&#39;)==index):
+            name = x.get(&#39;name&#39;)
+            acv = x.get(&#39;acv&#39;)
+
+    if (name==&#34;&#34;):
+        print(f&#34;no matching name for {index}&#34;)
+        return &#34;X&#34;
+    else:
+        return (name + &#34; (&#34; + acv + &#34;)&#34;)</code></pre>
 </details>
 </dd>
 <dt id="ladder_ly.functions.get_treatments"><code class="name flex">
@@ -912,6 +1172,39 @@ def remove_nodes_without_edges(nodes, edges):
     return filtered_nodes</code></pre>
 </details>
 </dd>
+<dt id="ladder_ly.functions.serialize_numpy"><code class="name flex">
+<span>def <span class="ident">serialize_numpy</span></span>(<span>array)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>serialize numpy array</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>array</code></strong> :&ensp;<code>[array]</code></dt>
+<dd>[numpy array]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>[String]</code></dt>
+<dd>[serialized array]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize_numpy(array):
+    &#34;&#34;&#34;serialize numpy array
+
+    Args:
+        array ([array]): [numpy array]
+
+    Returns:
+        [String]: [serialized array]
+    &#34;&#34;&#34;
+    array = array.tolist()
+    array = json.dumps(array)
+    return array</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -936,12 +1229,15 @@ def remove_nodes_without_edges(nodes, edges):
 <li><code><a title="ladder_ly.functions.cal_indirect_implication_matrix" href="#ladder_ly.functions.cal_indirect_implication_matrix">cal_indirect_implication_matrix</a></code></li>
 <li><code><a title="ladder_ly.functions.cal_nodes" href="#ladder_ly.functions.cal_nodes">cal_nodes</a></code></li>
 <li><code><a title="ladder_ly.functions.calculate_network_data" href="#ladder_ly.functions.calculate_network_data">calculate_network_data</a></code></li>
+<li><code><a title="ladder_ly.functions.create_grid_aim" href="#ladder_ly.functions.create_grid_aim">create_grid_aim</a></code></li>
 <li><code><a title="ladder_ly.functions.create_grid_ladders" href="#ladder_ly.functions.create_grid_ladders">create_grid_ladders</a></code></li>
 <li><code><a title="ladder_ly.functions.create_labels_tabel" href="#ladder_ly.functions.create_labels_tabel">create_labels_tabel</a></code></li>
 <li><code><a title="ladder_ly.functions.get_index_by_name" href="#ladder_ly.functions.get_index_by_name">get_index_by_name</a></code></li>
+<li><code><a title="ladder_ly.functions.get_name_by_index" href="#ladder_ly.functions.get_name_by_index">get_name_by_index</a></code></li>
 <li><code><a title="ladder_ly.functions.get_treatments" href="#ladder_ly.functions.get_treatments">get_treatments</a></code></li>
 <li><code><a title="ladder_ly.functions.proposed_cut_off_value" href="#ladder_ly.functions.proposed_cut_off_value">proposed_cut_off_value</a></code></li>
 <li><code><a title="ladder_ly.functions.remove_nodes_without_edges" href="#ladder_ly.functions.remove_nodes_without_edges">remove_nodes_without_edges</a></code></li>
+<li><code><a title="ladder_ly.functions.serialize_numpy" href="#ladder_ly.functions.serialize_numpy">serialize_numpy</a></code></li>
 </ul>
 </li>
 </ul>

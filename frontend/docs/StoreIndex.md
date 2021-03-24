@@ -26,6 +26,8 @@ source of data
     * [.gridLabels](#state.gridLabels)
     * [.gridLaddersCols](#state.gridLaddersCols)
     * [.gridLaddersRows](#state.gridLaddersRows)
+    * [.gridAimCols](#state.gridAimCols)
+    * [.gridAimRows](#state.gridAimRows)
     * [.upload](#state.upload)
     * [.cutOffValue](#state.cutOffValue)
     * [.radioInDirect](#state.radioInDirect)
@@ -48,6 +50,18 @@ ladder columns needed for the grid layout, to visualize uploaded data
 
 ### state.gridLaddersRows
 ladder rows needed for the grid layout, to visualize uploaded data
+
+**Kind**: static property of [<code>state</code>](#state)  
+<a name="state.gridAimCols"></a>
+
+### state.gridAimCols
+aim columns needed for the grid layout, to visualize aim
+
+**Kind**: static property of [<code>state</code>](#state)  
+<a name="state.gridAimRows"></a>
+
+### state.gridAimRows
+aim rows needed for the grid layout, to visualize aim
 
 **Kind**: static property of [<code>state</code>](#state)  
 <a name="state.upload"></a>
@@ -92,6 +106,7 @@ asynchronous operations
     * [.loadGridData(context)](#actions.loadGridData)
     * [.loadLaddersExample()](#actions.loadLaddersExample) ⇒
     * [.loadLabelsExample()](#actions.loadLabelsExample) ⇒
+    * [.loadAim()](#actions.loadAim) ⇒
     * [.updateNetwork(context, payload)](#actions.updateNetwork)
 
 <a name="actions.loadNetworkData"></a>
@@ -133,6 +148,13 @@ triggers api call to fetch labels_example.xlsx
 
 **Kind**: static method of [<code>actions</code>](#actions)  
 **Returns**: labels_example.xlsx  
+<a name="actions.loadAim"></a>
+
+### actions.loadAim() ⇒
+triggers api call to fetch aim.csv
+
+**Kind**: static method of [<code>actions</code>](#actions)  
+**Returns**: aim.csv  
 <a name="actions.updateNetwork"></a>
 
 ### actions.updateNetwork(context, payload)
@@ -169,7 +191,7 @@ saves payload in store
 | Param | Type | Description |
 | --- | --- | --- |
 | state | <code>\*</code> | state |
-| payload | <code>\*</code> | labels, ladder columns, rows |
+| payload | <code>\*</code> | labels, ladder columns, rows and aim coumuns, rows |
 
 <a name="mutations.setNetworkData"></a>
 
@@ -212,7 +234,7 @@ saves payload in store
 ## getters
 store date is accessed via this.$store.state.data
 
-**Kind**: global class
+**Kind**: global class 
 
 
 -----
@@ -221,5 +243,6 @@ store date is accessed via this.$store.state.data
 * [Home.vue](Home.md)
 * [Data.vue](Data.md)
 * [Hvm.vue](Hvm.md)
+* [Aim.vue](Aim.md)
 * [api/index.js](ApiIndex.md)
 * [store/index.js](StoreIndex.md)

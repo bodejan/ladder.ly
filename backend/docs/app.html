@@ -36,7 +36,7 @@ import pandas as pd
 import numpy as np
 import json
 
-from functions import calculate_network_data, remove_nodes_without_edges, cal_nodes, cal_edges, create_labels_tabel, create_grid_ladders
+from functions import calculate_network_data, remove_nodes_without_edges, cal_nodes, cal_edges, create_labels_tabel, create_grid_ladders, create_grid_aim, serialize_numpy
 
 
 
@@ -83,10 +83,21 @@ def grid_data():
         [dict]: [ladders, labels]
     &#34;&#34;&#34;
     labels = request.files[&#39;uploadLabels&#39;]
-    labels = create_labels_tabel(labels)
     ladders = request.files[&#39;uploadLadders&#39;]
+    aim = create_grid_aim(labels, ladders)
+    labels = create_labels_tabel(labels)
     ladders = create_grid_ladders(ladders)
-    return jsonify({&#39;ladders&#39;:ladders, &#39;labels&#39;:labels})
+    return jsonify({&#39;ladders&#39;:ladders, &#39;labels&#39;:labels, &#39;aim&#39;:aim})
+
+@app.route(&#39;/get_aim&#39;, methods = [&#34;GET&#34;])
+def get_aim():
+    &#34;&#34;&#34;Sends aim.csv to FE
+    @app.route(&#39;/get_aim&#39;, methods = [&#34;GET&#34;])
+
+    Returns:
+        [csv file]: [aim]
+    &#34;&#34;&#34;
+    return send_file(&#34;download/aim.csv&#34;, as_attachment=True, attachment_filename = &#39;aim&#39;, mimetype=&#39;text/csv&#39;)
 
 @app.route(&#39;/ladders_example&#39;, methods = [&#34;GET&#34;])
 def get_ladders_example():
@@ -147,6 +158,32 @@ if __name__ == &#39;__main__&#39;:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="ladder_ly.app.get_aim"><code class="name flex">
+<span>def <span class="ident">get_aim</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sends aim.csv to FE
+@app.route('/get_aim', methods = ["GET"])</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>[csv file]</code></dt>
+<dd>[aim]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.route(&#39;/get_aim&#39;, methods = [&#34;GET&#34;])
+def get_aim():
+    &#34;&#34;&#34;Sends aim.csv to FE
+    @app.route(&#39;/get_aim&#39;, methods = [&#34;GET&#34;])
+
+    Returns:
+        [csv file]: [aim]
+    &#34;&#34;&#34;
+    return send_file(&#34;download/aim.csv&#34;, as_attachment=True, attachment_filename = &#39;aim&#39;, mimetype=&#39;text/csv&#39;)</code></pre>
+</details>
+</dd>
 <dt id="ladder_ly.app.get_labels_example"><code class="name flex">
 <span>def <span class="ident">get_labels_example</span></span>(<span>)</span>
 </code></dt>
@@ -232,10 +269,11 @@ def grid_data():
         [dict]: [ladders, labels]
     &#34;&#34;&#34;
     labels = request.files[&#39;uploadLabels&#39;]
-    labels = create_labels_tabel(labels)
     ladders = request.files[&#39;uploadLadders&#39;]
+    aim = create_grid_aim(labels, ladders)
+    labels = create_labels_tabel(labels)
     ladders = create_grid_ladders(ladders)
-    return jsonify({&#39;ladders&#39;:ladders, &#39;labels&#39;:labels})</code></pre>
+    return jsonify({&#39;ladders&#39;:ladders, &#39;labels&#39;:labels, &#39;aim&#39;:aim})</code></pre>
 </details>
 </dd>
 <dt id="ladder_ly.app.network_data"><code class="name flex">
@@ -343,7 +381,8 @@ def ping_pong():
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="ladder_ly.app.get_aim" href="#ladder_ly.app.get_aim">get_aim</a></code></li>
 <li><code><a title="ladder_ly.app.get_labels_example" href="#ladder_ly.app.get_labels_example">get_labels_example</a></code></li>
 <li><code><a title="ladder_ly.app.get_ladders_example" href="#ladder_ly.app.get_ladders_example">get_ladders_example</a></code></li>
 <li><code><a title="ladder_ly.app.grid_data" href="#ladder_ly.app.grid_data">grid_data</a></code></li>

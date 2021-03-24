@@ -13,6 +13,9 @@
 <dt><a href="#fetchLabelsExample">fetchLabelsExample()</a></dt>
 <dd><p>api call to fetch labels_example.xlsx from BE</p>
 </dd>
+<dt><a href="#fetchAimDownload">fetchAimDownload()</a></dt>
+<dd><p>api call to fetch aim.csv from BE</p>
+</dd>
 </dl>
 
 <a name="fetchGridData"></a>
@@ -53,7 +56,13 @@ api call to fetch ladders_example.xlsx from BE
 ## fetchLabelsExample()
 api call to fetch labels_example.xlsx from BE
 
-**Kind**: global function
+**Kind**: global function  
+<a name="fetchAimDownload"></a>
+
+## fetchAimDownload()
+api call to fetch aim.csv from BE
+
+**Kind**: global function 
 
 -----
 ## Frontend Documentation: 
@@ -61,5 +70,6 @@ api call to fetch labels_example.xlsx from BE
 * [Home.vue](Home.md)
 * [Data.vue](Data.md)
 * [Hvm.vue](Hvm.md)
+* [Aim.vue](Aim.md)
 * [api/index.js](ApiIndex.md)
 * [store/index.js](StoreIndex.md)

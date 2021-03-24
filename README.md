@@ -28,9 +28,6 @@ Detailed documentation:
 * [Backend](https://htmlpreview.github.io/?https://github.com/bodejan/ladder.ly/blob/master/backend/docs/index.html) :
   * [app.py](https://htmlpreview.github.io/?https://github.com/bodejan/ladder.ly/blob/master/backend/docs/app.html) 
   * [functions.py](https://htmlpreview.github.io/?https://github.com/bodejan/ladder.ly/blob/master/backend/docs/functions.html)
-  * generate docs using [pydoc3](https://pypi.org/project/pdoc3/):
-  *```export PYTHONPATH="$PWD/ladder_ly"```
-  * ```export PYTHONPATH="$PWD/ladder_ly"```
 
   
 * [Frontend](frontend/docs/About.md)
@@ -41,10 +38,14 @@ Detailed documentation:
     * [Aim.vue](frontend/docs/Aim.md)
     * [api/index.js](frontend/docs/ApiIndex.md)
     * [store/index.js](frontend/docs/StoreIndex.md)
-    * generate docs using [vuedoc](https://github.com/vuedoc/md) (.vue) and [jsdoc2md](https://github.com/jsdoc2md) (.js):
-    *```vuedoc.md src/components/*.vue --output docs/```
-    * ```npx jsdoc2md src/store/index.js  ```
-    * ```npx jsdoc2md src/api/index.js  ```
+
+
+* generate docs using [pydoc3](https://pypi.org/project/pdoc3/) (.py), [vuedoc](https://github.com/vuedoc/md) (.vue) and [jsdoc2md](https://github.com/jsdoc2md) (.js):
+   * ```export PYTHONPATH="$PWD/ladder_ly"```
+   * ```pdoc ladder_ly --html --force --skip-errors```
+   * ```vuedoc.md src/components/*.vue --output docs/```
+   * ```npx jsdoc2md src/store/index.js  ```
+   * ```npx jsdoc2md src/api/index.js  ```
 
 
     

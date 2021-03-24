@@ -53,7 +53,7 @@ ____
 ____
 
 * configure your hierachical value map:
-    * cutoff-value
+    * cutoff-level
     * only direct, direct and indirect implications
     * treatment
     * submit to update the hierachical value map
@@ -65,7 +65,13 @@ ___
 ## Built With
 
 * [flask](https://flask.palletsprojects.com/en/1.1.x/) - Backend
+   * Pandas (data manipulation, file ex-, import)
+   * NumPy (multi-dimensional arrays)  
 * [vue.js](https://vuejs.org/) - Frontend
+   * Vuetify (design material components)
+   * Vuex (state management)
+   * Grid.js (visualization of tabels)
+   * Axios (frontend-backend communication)
 
 
 ## Contributing
